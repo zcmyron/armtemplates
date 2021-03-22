@@ -2,7 +2,6 @@ $src = 'https://api-us1.xbc.trendmicro.com/api/public/download_xbc_agent/v1.0/73
 $des = "c:\xbc.exe"
 Invoke-WebRequest -uri $src -OutFile $des
 Unblock-File $des
-
 sleep 100
-
 start c:\xbc.exe
+sleep 300
