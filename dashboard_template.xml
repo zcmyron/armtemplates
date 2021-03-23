@@ -1,0 +1,32 @@
+<dashboard theme="light" refresh="30">
+  <label>TrendMicro-XDR-alert</label>
+  <row>
+    <panel>
+      <table>
+        <title>Trend Micro XDR Alerts</title>
+        <search>
+          <query>source="tm-xdr-rest://TrendMicro-XDR-alert" | eval Details="Open XDR console"  | eval Severity=upper(substr(severity,1,1))+substr(severity,2) | dedup workbenchId | sort -createdTime
+              | fields - linecount, punct, eventtype, index, timestamp, splunk_server_group, sourcetype
+              | rename Severity AS "Model Severity", workbenchName AS Model, workbenchId AS "Workbench ID", createdTime AS Created, priorityScore AS Score, investigationStatus AS Status
+              | table "Model Severity", Score, Model,"Workbench ID",Created,Details,workbenchLink,Status</query>
+          <earliest>-30d@d</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <format type="color" field="Model Severity">
+          <colorPalette type="map">{"High":#F1813F,"Medium":#F8BE34,"Low":#B6C75A,"Critical":#DC4E41}</colorPalette>
+        </format>
+        <fields>["Status","Score","Workbench ID","Model","Model Severity","Created","Details"]</fields>
+        <drilldown target="_blank">
+          <condition field="Details">
+            <link>$row.workbenchLink|n$</link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</dashboard>
